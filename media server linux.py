@@ -1,36 +1,72 @@
-import multiprocessing
+import socket
+import threading
+import os
 
-boo = False
+PLAYPAUSE = "0"
+VOLUP = "1"
+VOLDOWN = "2"
 
-class newClass:
+port = 1200
+
+#declare new udp socket
+try:
+    udpServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
     
-    def __init__(self, name):
-        self.name = name
+    udpServerSocket.bind((socket.gethostname(), port))
+    print(f"socket bound {port}")
+except Exception as e:
+    print(e)
+
+
+def commandListener():
+    #listener for new commands
+    try:
+        while True:
+            print("listening")
+            bytesRecieved = udpServerSocket.recv(1024)
+            print("command recieved")
+            commandID = bytesRecieved.decode("utf-8")
+            
+            print(f"received {commandID} request")
+            
+            commandDelegation(commandID, address)
+    except Exception as e:
+        print(e)
+
+
+def commandDelegation(commandID, address):
+    #delegate which command is wanted
+    if commandID == PLAYPAUSE:
+        PLAY_PAUSE_COMMAND = "echo play pause command"
+        
+        executeCommand(PLAY_PAUSE_COMMAND)
+        writeToScreen(commandID, "PP", address)
+        
+    elif commandID == VOLUP:
+        VOLUME_UP_COMMAND = "echo voulme up command"
+        
+        executeCommand(VOLUME_UP_COMMAND)
+        writeToScreen(commandID, "UP", address)
+    elif commandID == VOLDOWN:
+        VOLUME_DOWN_COMMAND = "echo volume down command"
+        
+        executeCommand(VOLUME_DOWN_COMMAND)
+        writeToScreen(commandID, "down", address)
+        
+
+def executeCommand(sysCommand):
+    #os.system(sysCommand)
+    print(sysCommand)
+
+
+def writeToScreen(lastCommand, info, address):
+    print(f"{lastCommand}")
     
-    def mainFunction(self):
-        print("main")
-        x= 0
-        while x < 10:
-            print(x)
-            x += 1
-    
-    
-    def secondFunction(self):
-        print("sec")
-        for x in range(10):
-            print(x)
-        boo = True
+    if info != "":
+        print(f"Recieved {info} request from {address}")
 
 
-class1 = newClass("class1")
+#on new thread
+commandListener()
 
-listProcs = []
-
-listProcs.append(multiprocessing.Process(target=class1.mainFunction()))
-listProcs.append(multiprocessing.Process(target=class1.secondFunction()))
-
-for proc in listProcs:
-    proc.start()
-
-for proc in listProcs:
-    proc.join()
+print("end")
