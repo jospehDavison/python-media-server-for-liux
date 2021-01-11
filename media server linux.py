@@ -27,31 +27,30 @@ def commandListener():
             print("command recieved")
             commandID = bytesRecieved.decode("utf-8")
             
-            print(f"received {commandID} request")
-            
-            commandDelegation(commandID, address)
+            commandDelegation(commandID)
     except Exception as e:
         print(e)
+        commandListener()
 
 
-def commandDelegation(commandID, address):
+def commandDelegation(commandID):
     #delegate which command is wanted
     if commandID == PLAYPAUSE:
         PLAY_PAUSE_COMMAND = "echo play pause command"
         
         executeCommand(PLAY_PAUSE_COMMAND)
-        writeToScreen(commandID, "PP", address)
+        writeToScreen(commandID, "PP")
         
     elif commandID == VOLUP:
         VOLUME_UP_COMMAND = "echo voulme up command"
         
         executeCommand(VOLUME_UP_COMMAND)
-        writeToScreen(commandID, "UP", address)
+        writeToScreen(commandID, "UP")
     elif commandID == VOLDOWN:
         VOLUME_DOWN_COMMAND = "echo volume down command"
         
         executeCommand(VOLUME_DOWN_COMMAND)
-        writeToScreen(commandID, "down", address)
+        writeToScreen(commandID, "down")
         
 
 def executeCommand(sysCommand):
@@ -59,11 +58,11 @@ def executeCommand(sysCommand):
     print(sysCommand)
 
 
-def writeToScreen(lastCommand, info, address):
+def writeToScreen(lastCommand, info):
     print(f"{lastCommand}")
     
     if info != "":
-        print(f"Recieved {info} request from {address}")
+        print(f"Recieved {info} request")
 
 
 #on new thread
